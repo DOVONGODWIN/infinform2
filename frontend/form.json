@@ -1,0 +1,39 @@
+
+
+
+
+{
+  "schema": {
+    "type": "object",
+    "properties": {
+      "nom": { "type": "string" },
+      "age": { "type": "integer" },
+      "email": { "type": "string", "format": "email" },
+      "adresse": {
+            "type": "object",
+            "properties": {
+            "rue": { "type": "string" },
+            "ville": { "type": "string" },
+            "code_postal": { "type": "string" }
+            },
+            "required": ["rue", "ville", "code_postal"]
+        },
+      "bool-produit": { "type": "boolean" },
+      "hair_style": { "type": "string", "enum": ["court", "long", "bouclé", "lisse"] },
+      "couleur": { "type": "string", "enum": ["rouge", "bleu", "vert", "jaune", "noir", "blanc"] },
+      "date_naissance": { "type": "string", "format": "date" },
+      "question_ab1": { "type": "string", "enum": ["option1", "option2"] },
+      "question_ab2": { "type": "string", "enum": ["optionA", "optionB", "optionC"] },
+      "question_ab3": { "type": "string", "enum": ["optionX", "optionY", "optionZ"] },
+      "question_ab4": { "type": "string", "enum": ["optionA", "optionB", "optionC"] },
+      "heure": { "type": "string", "format": "time" }
+       
+
+
+    },
+    "required": ["nom", "age", "email", "adresse", "bool-produit", "hair_style", "couleur", "date_naissance", "question_ab1", "question_ab2", "question_ab3", "question_ab4", "heure"]
+
+  }
+}
+
+
