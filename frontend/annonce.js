@@ -64,7 +64,10 @@ function afficherDetailsAnnonce(id) {
 
   document.getElementById('btn-retour').addEventListener('click', retourALaListe);
   document.getElementById('open-form-button')
-        .addEventListener('click', () => window.open("form_page.html", "_blank"));
+    .addEventListener('click', () => {
+        localStorage.setItem('annonceTime', annonce.time);
+        window.open("form_page.html", "_blank");
+    });
 }
 
 function retourALaListe() {
