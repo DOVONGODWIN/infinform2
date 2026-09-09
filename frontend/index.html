@@ -18,5 +18,12 @@
             countdownEl.textContent = `Rechargement dans ${remain_time}s...`;
         });
     </script>
+
+    <button id="open-form-button">Open Form Page</button>
+
+<script>
+  document.getElementById('open-form-button')
+    .addEventListener('click', () => window.open("form_page.html", "_blank"));
+</script>
 </body>
 </html>
