@@ -1,39 +1,65 @@
-
-
-
-
 {
+  "title": "Formulaire Villa",
+  "subtitle": "Projet de construction résidentielle.",
+
   "schema": {
     "type": "object",
     "properties": {
-      "nom": { "type": "string" },
-      "age": { "type": "integer" },
-      "email": { "type": "string", "format": "email" },
-      "adresse": {
-            "type": "object",
-            "properties": {
-            "rue": { "type": "string" },
-            "ville": { "type": "string" },
-            "code_postal": { "type": "string" }
-            },
-            "required": ["rue", "ville", "code_postal"]
-        },
-      "bool-produit": { "type": "boolean" },
-      "hair_style": { "type": "string", "enum": ["court", "long", "bouclé", "lisse"] },
-      "couleur": { "type": "string", "enum": ["rouge", "bleu", "vert", "jaune", "noir", "blanc"] },
-      "date_naissance": { "type": "string", "format": "date" },
-      "question_ab1": { "type": "string", "enum": ["option1", "option2"] },
-      "question_ab2": { "type": "string", "enum": ["optionA", "optionB", "optionC"] },
-      "question_ab3": { "type": "string", "enum": ["optionX", "optionY", "optionZ"] },
-      "question_ab4": { "type": "string", "enum": ["optionA", "optionB", "optionC"] },
-      "heure": { "type": "string", "format": "time" }
-       
-
-
+      "nom":            { "type": "string" },
+      "prenom":         { "type": "string" },
+      "adresse":        { "type": "string" },
+      "email":          { "type": "string", "format": "email" },
+      "age":            { "type": "integer", "minimum": 0, "maximum": 120 },
+      "rideaux_ch3":    { "type": "string" },
+      "portail":        { "type": "boolean" },
+      "foot_sdb":       { "type": "boolean" },
+      "nb_chambres":    { "type": "integer", "minimum": 1, "maximum": 20 },
+      "bruit_max":      { "type": "integer", "minimum": 0, "maximum": 120 },
+      "bruit_enregistre": { "type": "integer", "minimum": 0, "maximum": 120 }
     },
-    "required": ["nom", "age", "email", "adresse", "bool-produit", "hair_style", "couleur", "date_naissance", "question_ab1", "question_ab2", "question_ab3", "question_ab4", "heure"]
+    "required": ["nom", "prenom", "adresse", "email", "age"]
+  },
 
+  "ui": {
+    "nom":         { "label": "Nom",     "widget": "text",   "placeholder": "" },
+    "prenom":      { "label": "Prénom",  "widget": "text" },
+    "adresse":     { "label": "Adresse", "widget": "text" },
+    "email":       { "label": "Mail",    "widget": "text",   "hint": "(pas de vérification, tape ce que tu veux)" },
+    "age":         { "label": "Âge",     "widget": "slider", "min": 0, "max": 120, "showValue": true },
+    "rideaux_ch3": { "label": "Couleur des rideaux de la chambre 3", "widget": "text", "placeholder": "ex. bleu nuit" },
+    "portail":     { "label": "Avec ou sans portail", "widget": "radio", "trueLabel": "Avec", "falseLabel": "Sans" },
+    "foot_sdb":    { "label": "Terrain de foot dans la salle de bain", "widget": "checkbox" },
+    "nb_chambres": { "label": "Nombre de chambres", "widget": "slider", "min": 1, "max": 20, "showValue": true },
+    "bruit_max":   { "label": "Volume de bruit max que les voisins doivent respecter", "widget": "slider", "min": 0, "max": 120, "unit": "dB", "showValue": true },
+    "bruit_enregistre": { "label": "Volume enregistré", "hint": "(dB, capteur de son)", "widget": "slider", "min": 0, "max": 120, "unit": "dB", "showValue": true, "readonly": true }
+  },
+
+
+
+
+"steps": [
+  {
+    "id": "etape1",
+    "fields": ["nom", "prenom", "adresse", "email", "age"],
+    "submitLabel": "Continuer"
+  },
+  {
+    "id": "etape2",
+    "fields": ["rideaux_ch3", "portail", "foot_sdb", "nb_chambres"],
+    "submitLabel": "Valider (vraiment ?)",
+    "trap": {
+      "message": "Volume légal max : 40 dB — aucune infraction détectée.",
+      "showIf": { "field": "bruit_enregistre", "lessThan": 40 }
+    }
+  },
+  {
+    "id": "etape3",
+    "fields": ["bruit_max", "bruit_enregistre"],
+    "submitLabel": "Terminer",
+    "questions_piege": [
+      "Confirmez-vous que vous ne confirmez pas ?",
+      "Cochez cette case pour ne pas continuer"
+    ]
   }
+  ]
 }
-
-

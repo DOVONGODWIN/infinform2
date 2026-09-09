@@ -1,41 +1,202 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Formulaire Villa</title>
+<style>
+  body {
+    background: #f2efe4;
+    font-family: "Courier New", monospace;
+    color: #2b2b2b;
+    max-width: 520px;
+    margin: 40px auto;
+    padding: 0 24px;
+    line-height: 1.5;
+  }
+  h1 { font-size: 20px; margin-bottom: 2px; }
+  .subtitle { font-size: 12px; color: #777; margin-top: 0; border-bottom: 1px dotted #999; padding-bottom: 8px; }
+  .field { margin: 22px 0; }
+  .label { font-weight: bold; font-size: 13px; display: block; margin-bottom: 4px; }
+  .hint { font-weight: normal; color: #888; font-size: 11px; }
+  input[type=text] {
+    width: 100%; border: none; border-bottom: 1px dotted #999;
+    background: transparent; padding: 4px 0; font-family: inherit; font-size: 13px;
+  }
+  input[type=text]:focus { outline: none; border-bottom: 1px solid #333; }
+  input[type=range] { width: 100%; }
+  .slider-row { display: flex; align-items: center; gap: 8px; }
+  .slider-val { min-width: 48px; text-align: right; font-weight: bold; font-size: 13px; }
+  .radio-group label { font-size: 12px; margin-right: 14px; }
+  .checkbox-row { font-size: 13px; display: flex; align-items: center; gap: 6px; }
+  .trap-msg { background: #e8e4d5; border: 1px solid #cfc9b5; padding: 8px 10px; font-size: 11px; color: #555; margin-top: 6px; }
+  button {
+    background: #dcd6c2; border: 1px solid #b7b09a; padding: 8px 18px;
+    font-family: inherit; font-size: 13px; cursor: pointer; margin-top: 10px;
+  }
+  button:hover { background: #d0c9b2; }
+  .step { border-top: 1px dashed #bbb; margin-top: 30px; padding-top: 10px; }
+</style>
 </head>
 <body>
 
-<div id="form-container">test opening form</div>
+<div id="form-root"></div>
 
 <script>
-  const fields = {
-    "nom":   { "type": "string" },
-    "age":   { "type": "integer" },
-    "email": { "type": "string", "format": "email" }
-  };
+/* ---------- 1. LE MODÈLE (JSON en dur, pas de fetch) ---------- */
+const CONFIG = {
+  title: "Formulaire Villa",
+  subtitle: "Projet de construction résidentielle.",
 
-  const container = document.getElementById("form-container");
+  properties: {
+    nom:          { widget: "text",   label: "Nom" },
+    prenom:       { widget: "text",   label: "Prénom" },
+    adresse:      { widget: "text",   label: "Adresse" },
+    email:        { widget: "text",   label: "Mail", hint: "(non vérifié, tape ce que tu veux)" },
+    age:          { widget: "slider", label: "Âge", min: 0, max: 120 },
+    rideaux_ch3:  { widget: "text",   label: "Couleur des rideaux de la chambre 3", placeholder: "ex. bleu nuit" },
+    portail:      { widget: "radio",  label: "Avec ou sans portail", trueLabel: "Avec", falseLabel: "Sans" },
+    foot_sdb:     { widget: "checkbox", label: "Terrain de foot dans la salle de bain" },
+    nb_chambres:  { widget: "slider", label: "Nombre de chambres", min: 1, max: 20 },
+    bruit_max:    { widget: "slider", label: "Volume de bruit max que les voisins doivent respecter", hint: "(dB)", min: 0, max: 120, unit: "dB" },
+    bruit_enr:    { widget: "slider", label: "Volume enregistré", hint: "(dB, capteur de son)", min: 0, max: 120, unit: "dB", readonly: true },
+    // champs révélés plus tard
+    but_par_jour: { widget: "slider", label: "Combien de buts par jour dans la salle de bain ?", min: 0, max: 50 },
+    confirme:     { widget: "checkbox", label: "Cochez cette case pour NE PAS confirmer" },
+    email_bis:    { widget: "text",   label: "Retapez votre mail à l'envers, sans les voyelles" }
+  },
 
-  for (const [key, prop] of Object.entries(fields)) {
-    const input = document.createElement("input");
-    input.type =
-      prop.format === "email" ? "email" :
-      prop.type === "integer" ? "number" : "text";
-    input.id = input.name = key;
+  steps: [
+    { fields: ["nom","prenom","adresse","email","age","rideaux_ch3","portail","foot_sdb","nb_chambres","bruit_max","bruit_enr"],
+      submitLabel: "Continuer" },
+    { fields: ["but_par_jour","email_bis"],
+      submitLabel: "Valider (vraiment ?)" },
+    { fields: ["confirme"],
+      submitLabel: "Terminer" }
+  ]
+};
 
-    const label = document.createElement("label");
-    label.textContent = key;
-    label.htmlFor = key;
+/* ---------- 2. LE MOTEUR ---------- */
+const root = document.getElementById("form-root");
+let currentStep = 0;
 
-    container.append(label, input);
+// entête
+const h1 = document.createElement("h1"); h1.textContent = CONFIG.title;
+const sub = document.createElement("p"); sub.className = "subtitle"; sub.textContent = CONFIG.subtitle;
+root.append(h1, sub);
+
+function createField(key) {
+  const prop = CONFIG.properties[key];
+  const field = document.createElement("div");
+  field.className = "field";
+
+  const label = document.createElement("label");
+  label.className = "label";
+  label.innerHTML = prop.label + (prop.hint ? ` <span class="hint">${prop.hint}</span>` : "");
+  field.appendChild(label);
+
+  let input;
+
+  if (prop.widget === "slider") {
+    const row = document.createElement("div");
+    row.className = "slider-row";
+    input = document.createElement("input");
+    input.type = "range";
+    input.min = prop.min; input.max = prop.max;
+    input.value = prop.readonly ? prop.min : Math.round((prop.min + prop.max) / 4);
+    if (prop.readonly) input.disabled = true;
+    const val = document.createElement("span");
+    val.className = "slider-val";
+    const show = () => val.textContent = input.value + (prop.unit ? " " + prop.unit : "");
+    input.addEventListener("input", () => { show(); checkTraps(); });
+    show();
+    row.append(input, val);
+    field.appendChild(row);
+
+  } else if (prop.widget === "radio") {
+    const group = document.createElement("div");
+    group.className = "radio-group";
+    [[prop.trueLabel, "true"], [prop.falseLabel, "false"]].forEach(([txt, v]) => {
+      const l = document.createElement("label");
+      const r = document.createElement("input");
+      r.type = "radio"; r.name = key; r.value = v;
+      l.append(r, document.createTextNode(" " + txt));
+      group.appendChild(l);
+    });
+    input = group;
+    field.appendChild(group);
+
+  } else if (prop.widget === "checkbox") {
+    const wrap = document.createElement("div");
+    wrap.className = "checkbox-row";
+    input = document.createElement("input");
+    input.type = "checkbox";
+    wrap.append(input, document.createTextNode(" " + prop.label));
+    label.remove(); // le texte est déjà à côté de la case
+    field.appendChild(wrap);
+
+  } else { // text
+    input = document.createElement("input");
+    input.type = "text";
+    if (prop.placeholder) input.placeholder = prop.placeholder;
+    field.appendChild(input);
   }
+
+  if (input && input.name === undefined) input.name = key;
+  return field;
+}
+
+// le piège : message qui réagit au slider "volume enregistré"
+function checkTraps() {
+  const box = document.getElementById("trap-msg");
+  if (!box) return;
+  const max = document.querySelector('[name="bruit_max"]');
+  const enr = document.querySelector('[name="bruit_enr"]');
+  if (max && enr) {
+    const infraction = Number(enr.value) > Number(max.value);
+    box.textContent = infraction
+      ? `⚠ Volume légal max : ${max.value} dB — INFRACTION détectée (${enr.value} dB).`
+      : `Volume légal max : ${max.value} dB — aucune infraction détectée.`;
+  }
+}
+
+function renderStep(i) {
+  const step = CONFIG.steps[i];
+  const section = document.createElement("div");
+  section.className = "step";
+
+  step.fields.forEach(key => section.appendChild(createField(key)));
+
+  // message piège seulement à l'étape 1
+  if (i === 0) {
+    const trap = document.createElement("div");
+    trap.className = "trap-msg";
+    trap.id = "trap-msg";
+    section.appendChild(trap);
+  }
+
+  const btn = document.createElement("button");
+  btn.textContent = step.submitLabel;
+  btn.addEventListener("click", () => {
+    btn.disabled = true;                 // on fige l'étape passée
+    currentStep++;
+    if (currentStep < CONFIG.steps.length) {
+      renderStep(currentStep);
+    } else {
+      const done = document.createElement("div");
+      done.className = "trap-msg";
+      done.textContent = "Formulaire soumis. (ou peut-être pas.)";
+      root.appendChild(done);
+    }
+  });
+  section.appendChild(btn);
+
+  root.appendChild(section);
+  if (i === 0) checkTraps();
+}
+
+renderStep(0);
 </script>
 
-
-
-
-    
 </body>
 </html>
