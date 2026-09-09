@@ -55,7 +55,7 @@
   {
     "id": "etape3",
     "fields": ["bruit_max", "bruit_enregistre"],
-    "submitLabel": "Terminer",
+    "submitLabel": "Payer 0.271€",
     "questions_piege": [
       "Confirmez-vous que vous ne confirmez pas ?",
       "Cochez cette case pour ne pas continuer"
