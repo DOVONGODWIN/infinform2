@@ -6,7 +6,7 @@ async function chargerAnnonces() {
   const container = document.getElementById('annonces-container');
 
   try {
-    const response = await fetch('annonces.json');
+    const response = await fetch('/frontend/json/annonces.json');
 
     if (!response.ok) {
       throw new Error(`Erreur HTTP : ${response.status}`);
