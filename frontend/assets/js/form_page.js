@@ -13,7 +13,7 @@ let root;
 async function init() {
   root = document.getElementById("form-root");
 
-  const res = await fetch("form_config.json");
+  const res = await fetch("/frontend/json/form_config.json");
   CONFIG = await res.json();
 
   const h1 = document.createElement("h1"); h1.textContent = CONFIG.title;
