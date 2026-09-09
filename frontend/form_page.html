@@ -40,7 +40,24 @@
 </head>
 <body>
 
+<div id="countdown"></div>
+
 <div id="form-root"></div>
+
+
+<script type="module">
+  import { refresh_page } from './assets/js/refresh_page.js';
+
+const time = Number(localStorage.getItem('annonceTime')) || 30;
+
+  const countdownEl = document.getElementById('countdown');
+
+  refresh_page((time ), (remain_time) => {
+      countdownEl.textContent = `Rechargement dans ${remain_time}s...`;
+  });
+</script>
+
+
 
 <script>
 /* ---------- 1. LE MODELE ---------- */
