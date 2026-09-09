@@ -57,9 +57,14 @@ function afficherDetailsAnnonce(id) {
     <img src="${annonce.image}" alt="${annonce.titre}" width="500">
     <p>${annonce.description}</p>
     <p><strong>${annonce.prix}</strong></p>
+        <button id="open-form-button">Réserver</button>
+
+        
   `;
 
   document.getElementById('btn-retour').addEventListener('click', retourALaListe);
+  document.getElementById('open-form-button')
+        .addEventListener('click', () => window.open("form_page.html", "_blank"));
 }
 
 function retourALaListe() {

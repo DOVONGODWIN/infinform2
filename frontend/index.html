@@ -6,24 +6,6 @@
     <title>infiniform</title>
 </head>
 <body>
-    <div id="countdown"></div>
-    <div>test</div>
-
-    <script type="module">
-        import { refresh_page } from './frompage.js';
-
-        const countdownEl = document.getElementById('countdown');
-
-        refresh_page(10, (remain_time) => {
-            countdownEl.textContent = `Rechargement dans ${remain_time}s...`;
-        });
-    </script>
-
-    <button id="open-form-button">Open Form Page</button>
-
-<script>
-  document.getElementById('open-form-button')
-    .addEventListener('click', () => window.open("form_page.html", "_blank"));
-</script>
+    
 </body>
 </html>

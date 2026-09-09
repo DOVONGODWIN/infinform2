@@ -6,8 +6,20 @@
     <title>Document</title>
 </head>
 <body>
+    
+<div id="countdown"></div>
 
 <div id="form-container">test opening form</div>
+
+<script type="module">
+  import { refresh_page } from './refresh_page.js';
+
+  const countdownEl = document.getElementById('countdown');
+
+  refresh_page(10, (remain_time) => {
+      countdownEl.textContent = `Rechargement dans ${remain_time}s...`;
+  });
+    </script>
 
 <script>
   const fields = {
