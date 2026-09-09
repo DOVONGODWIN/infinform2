@@ -4,14 +4,16 @@
         "titre": "Lamborghini GT271",
         "description": "Craquez pour cette Lamborghini GT271, une Grand Tourisme au design agressif et aux lignes tranchantes qui reprennent tout l'esprit sportif de la marque au taureau. Sa silhouette basse et ses finitions soignées lui donnent une allure aussi élégante qu'imposante sur la route. Sous le capot, un châssis rigide et une tenue de route incisive promettent des sensations fortes à chaque trajet. Un intérieur sport confortable complète cette expérience haut de gamme. Une occasion rare de s'offrir une italienne au caractère bien trempé, à un tarif totalement hors norme.",
         "image": "/images/lambo-gt271.jpg",
-        "prix": "6767€"
+        "prix": "6767€",
+        "time": 60
     },
     {
         "id": 2,
         "titre": "Villa en bord de mer",
         "description": "Craquez pour cette villa contemporaine, une résidence d'exception au design architectural saisissant et aux volumes généreux qui allient élégance méditerranéenne et modernité pure. Sa position dominante offre une vue imprenable, tandis que ses grandes baies vitrées et ses lignes épurées inondent l'intérieur de lumière naturelle. À l'extérieur, une piscine à débordement spectaculaire s'étend face au paysage, entourée de terrasses en pierre et d'un jardin luxuriant planté de palmiers. Un espace lounge extérieur complète cette expérience de vie haut de gamme, pensée pour recevoir et se détendre en toute intimité. Une occasion rare de s'offrir un cadre de vie d'exception, à la hauteur des plus belles propriétés de la Riviera.",
         "image": "/images/villa.jpg",
-        "prix": "0.271€ les 30 nuits"
+        "prix": "271€ les 30 nuits",
+        "time": 90
     }
     
 ]
