@@ -63,12 +63,18 @@ def get_annonce(annonce_id: int):
 
 
 @app.get("/api/form")
-def get_form():
+def get_form(type: str = None):
     conn = get_connection()
     try:
-        row = conn.execute(
-            "SELECT data FROM formulaires ORDER BY id DESC LIMIT 1"
-        ).fetchone()
+        if type:
+            row = conn.execute(
+                "SELECT data FROM formulaires WHERE json_extract(data, '$.type') = ? ORDER BY id DESC LIMIT 1",
+                (type,),
+            ).fetchone()
+        else:
+            row = conn.execute(
+                "SELECT data FROM formulaires ORDER BY id DESC LIMIT 1"
+            ).fetchone()
     finally:
         conn.close()
     if row is None:

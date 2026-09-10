@@ -8,6 +8,12 @@ FORM_JSON = "../frontend/json/form.json"
 conn = sqlite3.connect(DB_PATH)
 cur = conn.cursor()
 
+# --- Vidage des tables avant remplissage ---
+cur.execute("DELETE FROM annonces")
+cur.execute("DELETE FROM formulaires")
+cur.execute("DELETE FROM sqlite_sequence WHERE name IN ('annonces', 'formulaires')")
+print("Tables vidées.")
+
 # --- Annonces ---
 with open(ANNONCES_JSON, encoding="utf-8") as f:
     annonces = json.load(f)
@@ -20,16 +26,17 @@ for annonce in annonces:
 
 print(f"{len(annonces)} annonce(s) insérée(s).")
 
-# --- Formulaire ---
+# --- Formulaires ---
 with open(FORM_JSON, encoding="utf-8") as f:
-    form = json.load(f)
+    formulaires = json.load(f)
 
-cur.execute(
-    "INSERT INTO formulaires (data) VALUES (?)",
-    (json.dumps(form, ensure_ascii=False),)
-)
+for form in formulaires:
+    cur.execute(
+        "INSERT INTO formulaires (data) VALUES (?)",
+        (json.dumps(form, ensure_ascii=False),)
+    )
 
-print("1 formulaire inséré.")
+print(f"{len(formulaires)} formulaire(s) inséré(s).")
 
 conn.commit()
 

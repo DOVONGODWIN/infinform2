@@ -1,19 +1,14 @@
- const fields = {
-    "nom":   { "type": "string" },
-    "age":   { "type": "integer" },
-    "email": { "type": "string", "format": "email" }
-  };
-
-  /* Le moteur : lit form_config.json et genere le formulaire */
-
 let CONFIG;
 let currentStep = 0;
 let root;
+const state = {};       // valeurs des widgets speciaux : state[key] = nombre courant
+const interacted = {};  // pour les widgets sans target (mode "remplace un slider") : a-t-on touché au moins une fois ?
 
 async function init() {
   root = document.getElementById("form-root");
 
-  const res = await fetch("/api/form");
+  const type = localStorage.getItem('annonceType') || 'voiture';
+  const res = await fetch(`/api/form?type=${type}`);
   CONFIG = await res.json();
 
   const h1 = document.createElement("h1"); h1.textContent = CONFIG.title;
@@ -35,7 +30,13 @@ function createField(key) {
 
   let input;
 
-  if (prop.widget === "slider") {
+  if (prop.widget === "cannon") {
+    field.appendChild(buildCannon(key, prop));
+
+  } else if (prop.widget === "balance") {
+    field.appendChild(buildBalance(key, prop));
+
+  } else if (prop.widget === "slider") {
     const row = document.createElement("div");
     row.className = "slider-row";
     input = document.createElement("input");
@@ -79,6 +80,7 @@ function createField(key) {
     input.type = "text";
     if (prop.placeholder) input.placeholder = prop.placeholder;
     if (prop.defaultValue) input.value = prop.defaultValue;
+    if (prop.maxLength) input.maxLength = prop.maxLength;   // SADIQUE : 2 caracteres max
     field.appendChild(input);
   }
 
@@ -86,6 +88,260 @@ function createField(key) {
   return field;
 }
 
+/* ============================================
+   WIDGET CANON — maintien pour charger, relachement pour tirer
+   Plus on reste appuye longtemps, plus le boulet part loin.
+   Ou il atterit = valeur selectionnee (mappee sur [min, max]).
+
+   - Si prop.target est defini : mode "puzzle", il faut atterir EXACTEMENT
+     sur la cible (avec un risque de rate aleatoire, mode sadique).
+   - Si prop.target est absent : mode "libre", remplace un slider classique,
+     la valeur choisie est simplement celle du point d'atterrissage.
+   ============================================ */
+function buildCannon(key, prop) {
+  const isPuzzle = prop.target !== undefined && prop.target !== null;
+  state[key] = isPuzzle ? 0 : Math.round((prop.min + prop.max) / 2);
+  interacted[key] = false;
+
+  const MAX_CHARGE_MS = 1400;
+  const MAX_DISTANCE_PX = 130;
+
+  const wrap = document.createElement("div");
+  wrap.className = "cannon-wrap";
+
+  const scene = document.createElement("div");
+  scene.className = "cannon-scene";
+  scene.innerHTML =
+    '<span class="cannon-emoji">|=====@</span>' +
+    '<span class="cannon-ball">o</span>' +
+    (isPuzzle ? '<span class="cannon-target">[' + prop.target + ']</span>' : '');
+
+  const chargeBar = document.createElement("div");
+  chargeBar.className = "charge-bar";
+  const chargeFill = document.createElement("div");
+  chargeFill.className = "charge-fill";
+  chargeBar.appendChild(chargeFill);
+
+  const readout = document.createElement("div");
+  readout.className = "cannon-readout";
+  const refresh = () => {
+    readout.textContent = isPuzzle
+      ? "Valeur : " + state[key] + " / cible " + prop.target
+      : "Valeur : " + state[key] + (prop.unit ? " " + prop.unit : "");
+  };
+  refresh();
+
+  const holdBtn = document.createElement("button");
+  holdBtn.type = "button";
+  holdBtn.textContent = "MAINTENIR POUR CHARGER";
+  holdBtn.className = "cannon-btn";
+
+  const ball = scene.querySelector(".cannon-ball");
+
+  let chargeStart = null;
+  let chargeRAF = null;
+  let firing = false;
+
+  function tickCharge() {
+    if (chargeStart === null) return;
+    const elapsed = Math.min(Date.now() - chargeStart, MAX_CHARGE_MS);
+    const power = elapsed / MAX_CHARGE_MS;
+    chargeFill.style.width = (power * 100) + "%";
+    ball.style.transform = "translateX(" + (power * MAX_DISTANCE_PX * 0.5) + "px)";
+    if (chargeStart !== null) chargeRAF = requestAnimationFrame(tickCharge);
+  }
+
+  function startCharge(e) {
+    if (firing) return;
+    e.preventDefault();
+    chargeStart = Date.now();
+    holdBtn.classList.add("charging");
+    tickCharge();
+  }
+
+  function releaseCharge() {
+    if (chargeStart === null || firing) return;
+    firing = true;
+    const elapsed = Math.min(Date.now() - chargeStart, MAX_CHARGE_MS);
+    const power = elapsed / MAX_CHARGE_MS;
+    chargeStart = null;
+    if (chargeRAF) cancelAnimationFrame(chargeRAF);
+    holdBtn.classList.remove("charging");
+    chargeFill.style.width = "0%";
+
+    ball.style.transition = "transform .6s cubic-bezier(.2,.7,.3,1)";
+    ball.style.transform = "translateX(" + (power * MAX_DISTANCE_PX) + "px)";
+
+    setTimeout(() => {
+      let landedValue = Math.round(prop.min + power * (prop.max - prop.min));
+
+      if (isPuzzle) {
+        // 20% de rate en mode puzzle : le boulet retombe et enleve 2
+        if (Math.random() < 0.2) {
+          state[key] = Math.max(prop.min, state[key] - 2);
+          readout.textContent = "RATE ! Le boulet retombe. -2  (" + state[key] + ")";
+        } else {
+          state[key] = Math.min(prop.max, landedValue);
+          refresh();
+        }
+      } else {
+        state[key] = Math.min(prop.max, Math.max(prop.min, landedValue));
+        interacted[key] = true;
+        refresh();
+      }
+
+      ball.style.transition = "none";
+      ball.style.transform = "translateX(0)";
+      firing = false;
+    }, 650);
+  }
+
+  holdBtn.addEventListener("mousedown", startCharge);
+  holdBtn.addEventListener("touchstart", startCharge, { passive: false });
+  window.addEventListener("mouseup", releaseCharge);
+  window.addEventListener("touchend", releaseCharge);
+
+  wrap.append(scene, chargeBar, readout, holdBtn);
+  return wrap;
+}
+
+/* ============================================
+   WIDGET BALANCE — on maintient et on bouge la souris pour incliner
+   Une bille roule sur la barre en fonction de l'inclinaison.
+   Sa position au relachement = valeur selectionnee (mappee sur [min, max]).
+
+   - Si prop.target est defini : mode "puzzle", il faut relacher avec la
+     bille EXACTEMENT sur la valeur cible (mode sadique : parfois la bille
+     glisse toute seule d'une case).
+   - Si prop.target est absent : mode "libre", remplace un slider classique.
+   ============================================ */
+function buildBalance(key, prop) {
+  const isPuzzle = prop.target !== undefined && prop.target !== null;
+  state[key] = isPuzzle ? Math.round((prop.min + prop.max) / 2) : Math.round((prop.min + prop.max) / 2);
+  interacted[key] = false;
+
+  const MAX_ANGLE = 28; // degres
+
+  const wrap = document.createElement("div");
+  wrap.className = "balance-wrap";
+
+  const track = document.createElement("div");
+  track.className = "balance-track";
+
+  const beam = document.createElement("div");
+  beam.className = "balance-beam";
+
+  const ball = document.createElement("div");
+  ball.className = "balance-ball";
+  beam.appendChild(ball);
+
+  track.appendChild(beam);
+
+  if (isPuzzle) {
+    const markerPos = (prop.target - prop.min) / (prop.max - prop.min) * 100;
+    const marker = document.createElement("div");
+    marker.className = "balance-target-marker";
+    marker.style.left = markerPos + "%";
+    marker.textContent = prop.target;
+    track.appendChild(marker);
+  }
+
+  const scale = document.createElement("div");
+  scale.className = "balance-scale";
+  scale.innerHTML = "<span>" + prop.min + "</span><span>" + prop.max + "</span>";
+
+  const readout = document.createElement("div");
+  readout.className = "balance-readout";
+
+  const valueFromAngle = (angle) => {
+    const t = (angle + MAX_ANGLE) / (MAX_ANGLE * 2); // 0..1
+    return Math.round(prop.min + t * (prop.max - prop.min));
+  };
+  const angleFromValue = (value) => {
+    const t = (value - prop.min) / (prop.max - prop.min);
+    return t * (MAX_ANGLE * 2) - MAX_ANGLE;
+  };
+
+  let currentAngle = angleFromValue(state[key]);
+
+  const applyAngle = (angle) => {
+    currentAngle = Math.max(-MAX_ANGLE, Math.min(MAX_ANGLE, angle));
+    beam.style.transform = "rotate(" + currentAngle + "deg)";
+    const ballPos = (currentAngle + MAX_ANGLE) / (MAX_ANGLE * 2) * 100;
+    ball.style.left = ballPos + "%";
+  };
+  applyAngle(currentAngle);
+
+  const refresh = (value, missText) => {
+    if (missText) {
+      readout.textContent = missText;
+      return;
+    }
+    readout.textContent = isPuzzle
+      ? "Valeur : " + value + " / cible " + prop.target
+      : "Valeur : " + value + (prop.unit ? " " + prop.unit : "");
+  };
+  refresh(state[key]);
+
+  let dragging = false;
+  let startX = 0;
+  let startAngle = 0;
+
+  function startDrag(e) {
+    dragging = true;
+    startX = (e.touches ? e.touches[0].clientX : e.clientX);
+    startAngle = currentAngle;
+    track.classList.add("dragging");
+    e.preventDefault();
+  }
+
+  function moveDrag(e) {
+    if (!dragging) return;
+    const x = (e.touches ? e.touches[0].clientX : e.clientX);
+    const dx = x - startX;
+    const angle = startAngle + dx * 0.3; // sensibilite
+    applyAngle(angle);
+    refresh(valueFromAngle(currentAngle));
+  }
+
+  function endDrag() {
+    if (!dragging) return;
+    dragging = false;
+    track.classList.remove("dragging");
+
+    let finalValue = valueFromAngle(currentAngle);
+
+    if (isPuzzle) {
+      // mode sadique : parfois la bille glisse toute seule d'une case au relachement
+      if (Math.random() < 0.15) {
+        const nudge = Math.random() < 0.5 ? -1 : 1;
+        finalValue = Math.max(prop.min, Math.min(prop.max, finalValue + nudge));
+        applyAngle(angleFromValue(finalValue));
+        state[key] = finalValue;
+        refresh(null, "La bille a glisse...");
+        return;
+      }
+      state[key] = finalValue;
+      refresh(finalValue);
+    } else {
+      state[key] = finalValue;
+      interacted[key] = true;
+      refresh(finalValue);
+    }
+  }
+
+  beam.addEventListener("mousedown", startDrag);
+  beam.addEventListener("touchstart", startDrag, { passive: false });
+  window.addEventListener("mousemove", moveDrag);
+  window.addEventListener("touchmove", moveDrag, { passive: false });
+  window.addEventListener("mouseup", endDrag);
+  window.addEventListener("touchend", endDrag);
+
+  wrap.append(track, scale, readout);
+  return wrap;
+}
+
+/* le piege sonore : message qui reagit aux sliders */
 function checkTraps() {
   const box = document.getElementById("trap-msg");
   if (!box) return;
@@ -99,19 +355,31 @@ function checkTraps() {
   }
 }
 
+/* validation d'une etape : renvoie la liste des erreurs */
 function validateStep(step) {
   const errors = [];
   step.fields.forEach(key => {
     const prop = CONFIG.properties[key];
     if (!prop.required) return;
 
-    if (prop.widget === "radio") {
+    if (prop.widget === "cannon" || prop.widget === "balance") {
+      const isPuzzle = prop.target !== undefined && prop.target !== null;
+      if (isPuzzle) {
+        if (state[key] !== prop.target)
+          errors.push("'" + prop.label + "' : atteignez exactement " + prop.target + " (actuel " + state[key] + ").");
+      } else if (!interacted[key]) {
+        errors.push("'" + prop.label + "' : veuillez selectionner une valeur.");
+      }
+
+    } else if (prop.widget === "radio") {
       if (!document.querySelector('[name="' + key + '"]:checked'))
         errors.push("Le champ '" + prop.label + "' est obligatoire.");
+
     } else if (prop.widget === "checkbox") {
       if (!document.querySelector('[name="' + key + '"]').checked)
         errors.push("Le champ '" + prop.label + "' est obligatoire.");
-    } else {
+
+    } else { // text / slider
       const value = document.querySelector('[name="' + key + '"]').value.trim();
       if (prop.mustBeEmpty) {
         if (value !== "") errors.push("Le champ '" + prop.label + "' doit etre vide.");
@@ -142,7 +410,9 @@ function renderStep(i) {
   btn.addEventListener("click", () => {
     const errors = validateStep(step);
     if (errors.length) {
-      alert("Erreur.\n\n" + errors.join("\n"));
+      // SADIQUE : message vague OU detaille, au hasard
+      if (Math.random() < 0.5) alert("Erreur.");
+      else alert("Erreur.\n\n" + errors.join("\n"));
       return;
     }
     btn.disabled = true;
@@ -163,7 +433,3 @@ function renderStep(i) {
 }
 
 init();
-
-  export function openFormPage() {
-    window.open("form_page.html", "_blank");
-  }

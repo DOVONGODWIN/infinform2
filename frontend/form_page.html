@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Formulaire Villa</title>
+<title>Que 0,271 EUR ? t'es sure que c'est une villa ?</title>
 <style>
   body {
     background: #FFFFFF;
@@ -16,6 +16,7 @@
   }
   h1 { font-size: 20px; margin-bottom: 2px; }
   .subtitle { font-size: 12px; color: #777; margin-top: 0; border-bottom: 1px dotted #999; padding-bottom: 8px; }
+  #countdown { font-size: 12px; color: #b00; margin-bottom: 8px; }
   .field { margin: 22px 0; }
   .label { font-weight: bold; font-size: 13px; display: block; margin-bottom: 4px; }
   .hint { font-weight: normal; color: #888; font-size: 11px; }
@@ -36,218 +37,50 @@
   }
   button:hover { background: #d0c9b2; }
   .step { border-top: 1px dashed #bbb; margin-top: 30px; padding-top: 10px; }
+
+  /* ----- CANON ----- */
+  .cannon-wrap { border: 1px dashed #b7b09a; padding: 10px; }
+  .cannon-scene {
+    position: relative; height: 30px; font-size: 18px; overflow: hidden;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .cannon-ball { transition: transform .8s ease-out; display: inline-block; }
+  .cannon-target { margin-left: auto; color: #b00; font-weight: bold; }
+  .cannon-readout { font-size: 12px; margin: 6px 0; }
+  .cannon-btn { margin-top: 4px; }
+
+  /* ----- BALANCE ----- */
+  .balance-wrap { border: 1px dashed #b7b09a; padding: 10px; }
+  .balance-beam {
+    display: flex; justify-content: space-between; align-items: center;
+    transition: transform .3s ease; transform-origin: center;
+    border-top: 3px solid #555; padding-top: 6px; margin: 10px 0;
+  }
+  .balance-pan {
+    width: 90px; height: 42px; border: 1px solid #999; border-radius: 0 0 40px 40px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: bold; background: #f4f1e6;
+  }
+  .balance-readout { font-size: 12px; margin: 6px 0; }
+  .balance-btn { margin-right: 6px; }
 </style>
 </head>
 <body>
 
 <div id="countdown"></div>
-
 <div id="form-root"></div>
-
 
 <script type="module">
   import { refresh_page } from './assets/js/refresh_page.js';
-
-const time = Number(localStorage.getItem('annonceTime')) || 30;
-
+  const time = Number(localStorage.getItem('annonceTime')) || 30;
   const countdownEl = document.getElementById('countdown');
-
-  refresh_page((time ), (remain_time) => {
-      countdownEl.textContent = `Rechargement dans ${remain_time}s...`;
+  refresh_page(time, (remain_time) => {
+    countdownEl.textContent = `Rechargement dans ${remain_time}s...`;
   });
 </script>
 
 
-
-<script>
-/* ---------- 1. LE MODELE ---------- */
-const CONFIG = {
-  title: "Formulaire Villa",
-  subtitle: "Projet de construction residentielle.",
-
-  properties: {
-    nom:          { widget: "text",   label: "Nom", required: true },
-    prenom:       { widget: "text",   label: "Prenom", required: true },
-    adresse:      { widget: "text",   label: "Adresse", required: true },
-    email:        { widget: "text",   label: "Mail", hint: "(non verifie, tape ce que tu veux)", required: true },
-    age:          { widget: "slider", label: "Age", min: 0, max: 120, required: true },
-    rideaux_ch3:  { widget: "text",   label: "Couleur des rideaux de la chambre 3", placeholder: "ex. bleu nuit", required: true },
-    portail:      { widget: "radio",  label: "Avec ou sans portail", trueLabel: "Avec", falseLabel: "Sans", required: true },
-    foot_sdb:     { widget: "checkbox", label: "Terrain de foot dans la salle de bain", required: true },
-    nb_chambres:  { widget: "slider", label: "Nombre de chambres", min: 1, max: 20, required: true },
-    bruit_max:    { widget: "slider", label: "Volume de bruit max que les voisins doivent respecter", hint: "(dB)", min: 0, max: 120, unit: "dB", required: true },
-    bruit_enr:    { widget: "slider", label: "Volume enregistre", hint: "(dB, capteur de son)", min: 0, max: 120, unit: "dB", readonly: true },
-    
-    case_vide:    { widget: "text",   label: "Ce champ doit rester vide", defaultValue: "ne me supprimez pas", mustBeEmpty: true, required: true },
-
-    but_par_jour: { widget: "slider", label: "Combien de buts par jour dans la salle de bain ?", min: 0, max: 50, required: true },
-    confirme:     { widget: "checkbox", label: "Cochez cette case pour NE PAS confirmer", required: true },
-    email_bis:    { widget: "text",   label: "Retapez votre mail a l'envers, sans les voyelles", required: true }
-  },
-
-  steps: [
-    { fields: ["nom","prenom","adresse","email","age","rideaux_ch3","portail","foot_sdb","nb_chambres","bruit_max","bruit_enr","case_vide"],
-      submitLabel: "payer 0.271 EUR" },
-    { fields: ["but_par_jour","email_bis"],
-      submitLabel: "Valider (vraiment ?)" },
-    { fields: ["confirme"],
-      submitLabel: "Payer 0.271 EUR" }
-  ]
-};
-
-
-const root = document.getElementById("form-root");
-let currentStep = 0;
-
-const h1 = document.createElement("h1"); h1.textContent = CONFIG.title;
-const sub = document.createElement("p"); sub.className = "subtitle"; sub.textContent = CONFIG.subtitle;
-root.append(h1, sub);
-
-function createField(key) {
-  const prop = CONFIG.properties[key];
-  const field = document.createElement("div");
-  field.className = "field";
-
-  const label = document.createElement("label");
-  label.className = "label";
-  label.innerHTML = prop.label + (prop.hint ? ' <span class="hint">' + prop.hint + '</span>' : "");
-  field.appendChild(label);
-
-  let input;
-
-  if (prop.widget === "slider") {
-    const row = document.createElement("div");
-    row.className = "slider-row";
-    input = document.createElement("input");
-    input.type = "range";
-    input.min = prop.min; input.max = prop.max;
-    input.value = prop.readonly ? prop.min : Math.round((prop.min + prop.max) / 4);
-    if (prop.readonly) input.disabled = true;
-    const val = document.createElement("span");
-    val.className = "slider-val";
-    const show = () => val.textContent = input.value + (prop.unit ? " " + prop.unit : "");
-    input.addEventListener("input", () => { show(); checkTraps(); });
-    show();
-    row.append(input, val);
-    field.appendChild(row);
-
-  } else if (prop.widget === "radio") {
-    const group = document.createElement("div");
-    group.className = "radio-group";
-    [[prop.trueLabel, "true"], [prop.falseLabel, "false"]].forEach(([txt, v]) => {
-      const l = document.createElement("label");
-      const r = document.createElement("input");
-      r.type = "radio"; r.name = key; r.value = v;
-      l.append(r, document.createTextNode(" " + txt));
-      group.appendChild(l);
-    });
-    input = group;
-    field.appendChild(group);
-
-  } else if (prop.widget === "checkbox") {
-    const wrap = document.createElement("div");
-    wrap.className = "checkbox-row";
-    input = document.createElement("input");
-    input.type = "checkbox";
-    input.name = key;
-    wrap.append(input, document.createTextNode(" " + prop.label));
-    label.remove();
-    field.appendChild(wrap);
-
-  } else { // text
-    input = document.createElement("input");
-    input.type = "text";
-    if (prop.placeholder) input.placeholder = prop.placeholder;
-    if (prop.defaultValue) input.value = prop.defaultValue;   // pre-rempli (piege)
-    field.appendChild(input);
-  }
-
-  if (input && !input.name) input.name = key;
-  return field;
-}
-
-/* le piege sonore : message qui reagit aux sliders */
-function checkTraps() {
-  const box = document.getElementById("trap-msg");
-  if (!box) return;
-  const max = document.querySelector('[name="bruit_max"]');
-  const enr = document.querySelector('[name="bruit_enr"]');
-  if (max && enr) {
-    const infraction = Number(enr.value) > Number(max.value);
-    box.textContent = infraction
-      ? "/!\\ Volume legal max : " + max.value + " dB - INFRACTION detectee (" + enr.value + " dB)."
-      : "Volume legal max : " + max.value + " dB - aucune infraction detectee.";
-  }
-}
-
-/* validation d'une etape : renvoie la liste des erreurs */
-function validateStep(step) {
-  const errors = [];
-  step.fields.forEach(key => {
-    const prop = CONFIG.properties[key];
-    if (!prop.required) return;
-
-    if (prop.widget === "radio") {
-      if (!document.querySelector('[name="' + key + '"]:checked'))
-        errors.push("Le champ '" + prop.label + "' est obligatoire.");
-
-    } else if (prop.widget === "checkbox") {
-      if (!document.querySelector('[name="' + key + '"]').checked)
-        errors.push("Le champ '" + prop.label + "' est obligatoire.");
-
-    } else { // text / slider
-      const value = document.querySelector('[name="' + key + '"]').value.trim();
-      if (prop.mustBeEmpty) {
-        if (value !== "") errors.push("Le champ '" + prop.label + "' doit etre vide.");
-      } else if (value === "") {
-        errors.push("Le champ '" + prop.label + "' est obligatoire.");
-      }
-    }
-  });
-  return errors;
-}
-
-function renderStep(i) {
-  const step = CONFIG.steps[i];
-  const section = document.createElement("div");
-  section.className = "step";
-
-  step.fields.forEach(key => section.appendChild(createField(key)));
-
-  if (i === 0) {
-    const trap = document.createElement("div");
-    trap.className = "trap-msg";
-    trap.id = "trap-msg";
-    section.appendChild(trap);
-  }
-
-  const btn = document.createElement("button");
-  btn.textContent = step.submitLabel;
-  btn.addEventListener("click", () => {
-    const errors = validateStep(step);
-    if (errors.length) {
-      alert("Erreur.\n\n" + errors.join("\n"));
-      return;                       // on NE passe PAS a l'etape suivante
-    }
-    btn.disabled = true;
-    currentStep++;
-    if (currentStep < CONFIG.steps.length) {
-      renderStep(currentStep);
-    } else {
-      const done = document.createElement("div");
-      done.className = "trap-msg";
-      done.textContent = "Formulaire soumis. (ou peut-etre pas.)";
-      root.appendChild(done);
-    }
-  });
-  section.appendChild(btn);
-
-  root.appendChild(section);
-  if (i === 0) checkTraps();
-}
-
-renderStep(0);
-</script>
+<script type="module" src="/assets/js/form_page.js"></script>
 
 </body>
 </html>

@@ -1,31 +1,258 @@
-{
-  "title": "Formulaire Villa",
-  "subtitle": "Projet de construction residentielle.",
-
-  "properties": {
-    "nom":          { "widget": "text",   "label": "Nom", "required": true },
-    "prenom":       { "widget": "text",   "label": "Prenom", "required": true },
-    "adresse":      { "widget": "text",   "label": "Adresse", "required": true },
-    "email":        { "widget": "text",   "label": "Mail", "hint": "(non verifie, tape ce que tu veux)", "required": true },
-    "age":          { "widget": "slider", "label": "Age", "min": 0, "max": 120, "required": true },
-    "rideaux_ch3":  { "widget": "text",   "label": "Couleur des rideaux de la chambre 3", "placeholder": "ex. bleu nuit", "required": true },
-    "portail":      { "widget": "radio",  "label": "Avec ou sans portail", "trueLabel": "Avec", "falseLabel": "Sans", "required": true },
-    "foot_sdb":     { "widget": "checkbox", "label": "Terrain de foot dans la salle de bain", "required": true },
-    "nb_chambres":  { "widget": "slider", "label": "Nombre de chambres", "min": 1, "max": 20, "required": true },
-    "bruit_max":    { "widget": "slider", "label": "Volume de bruit max que les voisins doivent respecter", "hint": "(dB)", "min": 0, "max": 120, "unit": "dB", "required": true },
-    "bruit_enr":    { "widget": "slider", "label": "Volume enregistre", "hint": "(dB, capteur de son)", "min": 0, "max": 120, "unit": "dB", "readonly": true },
-    "case_vide":    { "widget": "text",   "label": "Ce champ doit rester vide", "defaultValue": "ne me supprimez pas", "mustBeEmpty": true, "required": true },
-    "but_par_jour": { "widget": "slider", "label": "Combien de buts par jour dans la salle de bain ?", "min": 0, "max": 50, "required": true },
-    "confirme":     { "widget": "checkbox", "label": "Cochez cette case pour NE PAS confirmer", "required": true },
-    "email_bis":    { "widget": "text",   "label": "Retapez votre mail a l'envers, sans les voyelles", "required": true }
+[
+  {
+    "title": "Formulaire Voiture",
+    "subtitle": "Un seul formulaire vous separe de la voiture. Bon courage.",
+    "properties": {
+      "nom": {
+        "widget": "text",
+        "label": "Nom (2 caracteres MAX)",
+        "maxLength": 2,
+        "required": true
+      },
+      "prenom": {
+        "widget": "text",
+        "label": "Prenom (2 caracteres MAX)",
+        "maxLength": 2,
+        "required": true
+      },
+      "permis": {
+        "widget": "radio",
+        "label": "Avez-vous le permis ?",
+        "trueLabel": "Oui",
+        "falseLabel": "Non, mais j'ai de l'ambition",
+        "required": true
+      },
+      "chevaux": {
+        "widget": "cannon",
+        "label": "Nombre de chevaux souhaite (tirez au canon)",
+        "min": 0,
+        "max": 2000,
+        "target": 1600,
+        "required": true
+      },
+      "couleur_jantes": {
+        "widget": "text",
+        "label": "Couleur exacte des jantes (2 car. max)",
+        "placeholder": "ex",
+        "maxLength": 2,
+        "required": true
+      },
+      "klaxon": {
+        "widget": "checkbox",
+        "label": "Le klaxon doit jouer une musique classique",
+        "required": true
+      },
+      "nb_portes": {
+        "widget": "balance",
+        "label": "Nombre de portes (equilibrez la balance)",
+        "min": 1,
+        "max": 6,
+        "target": 2,
+        "required": true
+      },
+      "bruit_moteur": {
+        "widget": "balance",
+        "label": "Volume sonore du moteur souhaite",
+        "hint": "(dB)",
+        "min": 0,
+        "max": 130,
+        "unit": "dB",
+        "required": true
+      },
+      "bruit_tolere": {
+        "widget": "slider",
+        "label": "Volume tolere par le voisinage",
+        "hint": "(dB, non modifiable)",
+        "min": 0,
+        "max": 130,
+        "unit": "dB",
+        "readonly": true
+      },
+      "case_vide": {
+        "widget": "text",
+        "label": "Ce champ doit rester vide",
+        "defaultValue": "ne me supprimez pas",
+        "mustBeEmpty": true,
+        "required": true
+      },
+      "tours_circuit": {
+        "widget": "cannon",
+        "label": "Nombre de tours de circuit promis avant livraison (au canon)",
+        "min": 0,
+        "max": 50,
+        "target": 12,
+        "required": true
+      },
+      "confirme": {
+        "widget": "checkbox",
+        "label": "Cochez cette case pour NE PAS confirmer votre commande",
+        "required": true
+      },
+      "plaque_envers": {
+        "widget": "text",
+        "label": "Retapez votre future plaque d'immatriculation a l'envers (2 car. max)",
+        "maxLength": 2,
+        "required": true
+      }
+    },
+    "steps": [
+      {
+        "fields": [
+          "nom",
+          "prenom",
+          "permis",
+          "chevaux",
+          "couleur_jantes",
+          "klaxon",
+          "nb_portes",
+          "bruit_moteur",
+          "bruit_tolere",
+          "case_vide"
+        ],
+        "submitLabel": "Payer maintenant"
+      },
+      {
+        "fields": [
+          "tours_circuit",
+          "plaque_envers"
+        ],
+        "submitLabel": "Valider (vraiment ?)"
+      },
+      {
+        "fields": [
+          "confirme"
+        ],
+        "submitLabel": "Payer maintenant"
+      }
+    ],
+    "type": "voiture"
   },
-
-  "steps": [
-    { "fields": ["nom","prenom","adresse","email","age","rideaux_ch3","portail","foot_sdb","nb_chambres","bruit_max","bruit_enr","case_vide"],
-      "submitLabel": "payer 0.271 EUR" },
-    { "fields": ["but_par_jour","email_bis"],
-      "submitLabel": "Valider (vraiment ?)" },
-    { "fields": ["confirme"],
-      "submitLabel": "Payer 0.271 EUR" }
-  ]
-}
+  {
+    "title": "Formulaire Logement",
+    "subtitle": "Le logement ne se remplira pas tout seul. Ni ce formulaire.",
+    "properties": {
+      "nom": {
+        "widget": "text",
+        "label": "Nom (2 caracteres MAX)",
+        "maxLength": 2,
+        "required": true
+      },
+      "prenom": {
+        "widget": "text",
+        "label": "Prenom (2 caracteres MAX)",
+        "maxLength": 2,
+        "required": true
+      },
+      "animaux": {
+        "widget": "radio",
+        "label": "Avez-vous des animaux ?",
+        "trueLabel": "Oui",
+        "falseLabel": "Non",
+        "required": true
+      },
+      "etage": {
+        "widget": "cannon",
+        "label": "Etage souhaite (tirez au canon)",
+        "min": 0,
+        "max": 60,
+        "target": 42,
+        "required": true
+      },
+      "couleur_facade": {
+        "widget": "text",
+        "label": "Teinte exacte de la facade (2 car. max)",
+        "placeholder": "ex",
+        "maxLength": 2,
+        "required": true
+      },
+      "majordome": {
+        "widget": "checkbox",
+        "label": "Le majordome doit parler 5 langues minimum",
+        "required": true
+      },
+      "nb_chambres": {
+        "widget": "balance",
+        "label": "Nombre de chambres (equilibrez la balance)",
+        "min": 1,
+        "max": 20,
+        "target": 4,
+        "required": true
+      },
+      "temperature_spa": {
+        "widget": "cannon",
+        "label": "Temperature souhaitee du spa",
+        "hint": "(°C)",
+        "min": 20,
+        "max": 45,
+        "unit": "°C",
+        "required": true
+      },
+      "temperature_ext": {
+        "widget": "slider",
+        "label": "Temperature exterieure actuelle",
+        "hint": "(°C, capteur non modifiable)",
+        "min": 20,
+        "max": 45,
+        "unit": "°C",
+        "readonly": true
+      },
+      "case_vide": {
+        "widget": "text",
+        "label": "Ce champ doit rester vide",
+        "defaultValue": "ne me supprimez pas",
+        "mustBeEmpty": true,
+        "required": true
+      },
+      "bouteilles_champ": {
+        "widget": "cannon",
+        "label": "Nombre de bouteilles de champagne a la livraison (au canon)",
+        "min": 0,
+        "max": 30,
+        "target": 9,
+        "required": true
+      },
+      "confirme": {
+        "widget": "checkbox",
+        "label": "Cochez cette case pour NE PAS confirmer votre reservation",
+        "required": true
+      },
+      "code_portail": {
+        "widget": "text",
+        "label": "Retapez le code du portail a l'envers (2 car. max)",
+        "maxLength": 2,
+        "required": true
+      }
+    },
+    "steps": [
+      {
+        "fields": [
+          "nom",
+          "prenom",
+          "animaux",
+          "etage",
+          "couleur_facade",
+          "majordome",
+          "nb_chambres",
+          "temperature_spa",
+          "temperature_ext",
+          "case_vide"
+        ],
+        "submitLabel": "Payer maintenant"
+      },
+      {
+        "fields": [
+          "bouteilles_champ",
+          "code_portail"
+        ],
+        "submitLabel": "Valider (vraiment ?)"
+      },
+      {
+        "fields": [
+          "confirme"
+        ],
+        "submitLabel": "Payer maintenant"
+      }
+    ],
+    "type": "logement"
+  }
+]
