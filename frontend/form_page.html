@@ -77,7 +77,7 @@ const CONFIG = {
     nb_chambres:  { widget: "slider", label: "Nombre de chambres", min: 1, max: 20, required: true },
     bruit_max:    { widget: "slider", label: "Volume de bruit max que les voisins doivent respecter", hint: "(dB)", min: 0, max: 120, unit: "dB", required: true },
     bruit_enr:    { widget: "slider", label: "Volume enregistre", hint: "(dB, capteur de son)", min: 0, max: 120, unit: "dB", readonly: true },
-    // LE PIEGE : pre-rempli, a VIDER pour valider
+    
     case_vide:    { widget: "text",   label: "Ce champ doit rester vide", defaultValue: "ne me supprimez pas", mustBeEmpty: true, required: true },
 
     but_par_jour: { widget: "slider", label: "Combien de buts par jour dans la salle de bain ?", min: 0, max: 50, required: true },
@@ -95,7 +95,7 @@ const CONFIG = {
   ]
 };
 
-/* ---------- 2. LE MOTEUR ---------- */
+
 const root = document.getElementById("form-root");
 let currentStep = 0;
 
