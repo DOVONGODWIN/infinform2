@@ -1,19 +1,65 @@
-[ 
-    {
-        "id": 1,
-        "titre": "Lamborghini GT271",
-        "description": "Craquez pour cette Lamborghini GT271, une Grand Tourisme au design agressif et aux lignes tranchantes qui reprennent tout l'esprit sportif de la marque au taureau. Sa silhouette basse et ses finitions soignées lui donnent une allure aussi élégante qu'imposante sur la route. Sous le capot, un châssis rigide et une tenue de route incisive promettent des sensations fortes à chaque trajet. Un intérieur sport confortable complète cette expérience haut de gamme. Une occasion rare de s'offrir une italienne au caractère bien trempé, à un tarif totalement hors norme.",
-        "image": "assets/images/lambo-gt271.jpg",
-        "prix": "6767€",
-        "time": 60
-    },
-    {
-        "id": 2,
-        "titre": "Villa en bord de mer",
-        "description": "Craquez pour cette villa contemporaine, une résidence d'exception au design architectural saisissant et aux volumes généreux qui allient élégance méditerranéenne et modernité pure. Sa position dominante offre une vue imprenable, tandis que ses grandes baies vitrées et ses lignes épurées inondent l'intérieur de lumière naturelle. À l'extérieur, une piscine à débordement spectaculaire s'étend face au paysage, entourée de terrasses en pierre et d'un jardin luxuriant planté de palmiers. Un espace lounge extérieur complète cette expérience de vie haut de gamme, pensée pour recevoir et se détendre en toute intimité. Une occasion rare de s'offrir un cadre de vie d'exception, à la hauteur des plus belles propriétés de la Riviera.",
-        "image": "assets/images/villa.jpg",
-        "prix": "271€ les 30 nuits",
-        "time": 90
-    }
-    
+[
+  {
+    "id": 1,
+    "titre": "Lamborghini GT271",
+    "description": "Craquez pour cette Lamborghini GT271, une Grand Tourisme au design agressif et aux lignes tranchantes qui reprennent tout l'esprit sportif de la marque au taureau. Sa silhouette basse et ses finitions soignées lui donnent une allure aussi élégante qu'imposante sur la route. Sous le capot, un châssis rigide et une tenue de route incisive promettent des sensations fortes à chaque trajet. Un intérieur sport confortable complète cette expérience haut de gamme. Une occasion rare de s'offrir une italienne au caractère bien trempé, à un tarif totalement hors norme.",
+    "image": "assets/images/lambo-gt271.jpg",
+    "prix": "6767€",
+    "time": 30,
+    "type": "voiture"
+  },
+  {
+    "id": 2,
+    "titre": "Villa en bord de mer",
+    "description": "Craquez pour cette villa contemporaine, une résidence d'exception au design architectural saisissant et aux volumes généreux qui allient élégance méditerranéenne et modernité pure. Sa position dominante offre une vue imprenable, tandis que ses grandes baies vitrées et ses lignes épurées inondent l'intérieur de lumière naturelle. À l'extérieur, une piscine à débordement spectaculaire s'étend face au paysage, entourée de terrasses en pierre et d'un jardin luxuriant planté de palmiers. Un espace lounge extérieur complète cette expérience de vie haut de gamme, pensée pour recevoir et se détendre en toute intimité. Une occasion rare de s'offrir un cadre de vie d'exception, à la hauteur des plus belles propriétés de la Riviera.",
+    "image": "assets/images/villa.jpg",
+    "prix": "271€ les 30 nuits",
+    "time": 45,
+    "type": "logement"
+  },
+  {
+    "id": 3,
+    "titre": "Bugatti Chiron Super Sport",
+    "description": "Craquez pour cette Bugatti Chiron Super Sport, l'une des hypercars les plus exclusives jamais produites, symbole absolu de la démesure automobile française. Son W16 quadri-turbo développe une puissance stratosphérique, propulsant la voiture au-delà des 400 km/h en piste. La carrosserie sculptée à la main et la fibre de carbone apparente témoignent d'un artisanat sans compromis. À l'intérieur, cuir Nappa et aluminium usiné composent un cockpit digne d'un vaisseau de course. Une occasion absolument unique de posséder l'une des voitures les plus rares au monde, à un tarif totalement hors norme.",
+    "image": "assets/images/chiron.jpg",
+    "prix": "8990€",
+    "time": 30,
+    "type": "voiture"
+  },
+  {
+    "id": 4,
+    "titre": "Penthouse à Monaco",
+    "description": "Craquez pour ce penthouse d'exception au sommet d'une tour monégasque, offrant une vue à 360° sur le port et la Méditerranée. Ses terrasses suspendues, sa piscine à débordement privative et son ascenseur privé en font l'une des adresses les plus convoitées de la Principauté. Les volumes démesurés et les matériaux nobles, marbre de Carrare et bois précieux, composent un intérieur digne des plus grandes fortunes. Un spa privé et une cave à vin climatisée complètent cet art de vivre hors du commun. Une occasion rarissime de s'offrir l'un des logements les plus prestigieux d'Europe, à un prix totalement dérisoire.",
+    "image": "assets/images/penthouse.jpg",
+    "prix": "890€ la semaine",
+    "time": 45,
+    "type": "logement"
+  },
+  {
+    "id": 5,
+    "titre": "Koenigsegg Jesko",
+    "description": "Craquez pour cette Koenigsegg Jesko, hypercar suédoise conçue sans le moindre compromis pour repousser les limites de la vitesse pure. Sa boîte Light Speed Transmission à neuf embrayages permet des changements de rapport en une fraction de seconde, une prouesse technique unique au monde. Chaque pièce, façonnée en carbone et en titane, a été pensée pour l'extrême performance sans jamais sacrifier l'élégance. L'aérodynamique active et les ailerons ajustables témoignent d'un savoir-faire artisanal réservé à une poignée d'élus. Une occasion inespérée de posséder l'une des voitures les plus exclusives de la planète, à un tarif totalement déraisonnable.",
+    "image": "assets/images/jesko.jpg",
+    "prix": "9750€",
+    "time": 30,
+    "type": "voiture"
+  },
+  {
+    "id": 6,
+    "titre": "Villa avec île privée",
+    "description": "Craquez pour cette villa nichée sur une île privée des Caraïbes, un sanctuaire isolé où luxe et nature sauvage se fondent en parfaite harmonie. Accessible uniquement en bateau ou en hélicoptère, la propriété s'étend sur une plage de sable blanc bordée d'eaux turquoise. Chaque suite ouvre directement sur l'océan, avec piscine à débordement individuelle et service de majordome dédié. Un ponton privé, un spa en pleine nature et un restaurant gastronomique complètent cette expérience insulaire absolue. Une occasion exceptionnelle de s'offrir un paradis privé loin du monde, à un prix totalement hors marché.",
+    "image": "assets/images/villa_ile.jpg",
+    "prix": "450€ les 10 nuits",
+    "time": 45,
+    "type": "logement"
+  },
+  {
+    "id": 8,
+    "titre": "Manoir historique en Toscane",
+    "description": "Craquez pour ce manoir du XVIIe siècle niché au cœur des collines toscanes, entouré de vignobles centenaires et d'oliveraies à perte de vue. Les fresques d'origine, les plafonds à caissons et les cheminées en pierre racontent quatre siècles d'histoire italienne préservée avec soin. Une piscine à débordement surplombe la vallée, tandis qu'une cave voûtée abrite une sélection de grands crus locaux. Le domaine comprend également une chapelle privée et des jardins à l'italienne dessinés avec précision. Une occasion rarissime de s'offrir un fragment du patrimoine toscan, à un prix totalement dérisoire au regard de sa valeur.",
+    "image": "assets/images/manoir.jpg",
+    "prix": "670€ les 30 nuits",
+    "time": 45,
+    "type": "logement"
+  }
 ]
