@@ -228,7 +228,6 @@ input:focus-visible {
 
 /* ============================================
    Formulaire
-   Nécessite class="form-page" sur le <body> de form_page.html
    ============================================ */
 
 body.form-page {

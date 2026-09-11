@@ -5,14 +5,16 @@
     "properties": {
       "nom": {
         "widget": "text",
-        "label": "Nom (2 caracteres MAX)",
-        "maxLength": 2,
+        "label": "Nom (entre 6 et 7 caracteres)",
+        "minLength": 6,
+        "maxLength": 7,
         "required": true
       },
       "prenom": {
         "widget": "text",
-        "label": "Prenom (2 caracteres MAX)",
-        "maxLength": 2,
+        "label": "Prenom (entre 6 et 7 caracteres)",
+        "minLength": 6,
+        "maxLength": 7,
         "required": true
       },
       "permis": {
@@ -32,9 +34,10 @@
       },
       "couleur_jantes": {
         "widget": "text",
-        "label": "Couleur exacte des jantes (2 car. max)",
+        "label": "Couleur exacte des jantes (entre 6 et 7 car.)",
         "placeholder": "ex",
-        "maxLength": 2,
+        "minLength": 6,
+        "maxLength": 7,
         "required": true
       },
       "klaxon": {
@@ -90,8 +93,9 @@
       },
       "plaque_envers": {
         "widget": "text",
-        "label": "Retapez votre future plaque d'immatriculation a l'envers (2 car. max)",
-        "maxLength": 2,
+        "label": "Retapez votre future plaque d'immatriculation a l'envers (entre 6 et 7 car.)",
+        "minLength": 6,
+        "maxLength": 7,
         "required": true
       }
     },
@@ -134,14 +138,16 @@
       "age": { "widget": "cannon", "label": "Age", "min": 0, "max": 120, "target": 30, "tolerance": 5, "required": true },
       "nom": {
         "widget": "text",
-        "label": "Nom (2 caracteres MAX)",
-        "maxLength": 2,
+        "label": "Nom (entre 6 et 7 caracteres)",
+        "minLength": 6,
+        "maxLength": 7,
         "required": true
       },
       "prenom": {
         "widget": "text",
-        "label": "Prenom (2 caracteres MAX)",
-        "maxLength": 2,
+        "label": "Prenom (entre 6 et 7 caracteres)",
+        "minLength": 6,
+        "maxLength": 7,
         "required": true
       },
       "animaux": {
@@ -161,9 +167,10 @@
       },
       "couleur_facade": {
         "widget": "text",
-        "label": "Teinte exacte de la facade (2 car. max)",
+        "label": "Teinte exacte de la facade (entre 6 et 7 car.)",
         "placeholder": "ex",
-        "maxLength": 2,
+        "minLength": 6,
+        "maxLength": 7,
         "required": true
       },
       "majordome": {
@@ -219,8 +226,9 @@
       },
       "code_portail": {
         "widget": "text",
-        "label": "Retapez le code du portail a l'envers (2 car. max)",
-        "maxLength": 2,
+        "label": "Retapez le code du portail a l'envers (entre 6 et 7 car.)",
+        "minLength": 6,
+        "maxLength": 7,
         "required": true
       }
     },
