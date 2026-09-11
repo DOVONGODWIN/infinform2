@@ -363,15 +363,16 @@ function validateStep(step) {
     if (!prop.required) return;
 
     if (prop.widget === "cannon" || prop.widget === "balance") {
-      const isPuzzle = prop.target !== undefined && prop.target !== null;
-      if (isPuzzle) {
-        if (state[key] !== prop.target)
-          errors.push("'" + prop.label + "' : atteignez exactement " + prop.target + " (actuel " + state[key] + ").");
-      } else if (!interacted[key]) {
-        errors.push("'" + prop.label + "' : veuillez selectionner une valeur.");
-      }
-
-    } else if (prop.widget === "radio") {
+  const isPuzzle = prop.target !== undefined && prop.target !== null;
+  if (isPuzzle) {
+    const tolerance = prop.tolerance !== undefined ? prop.tolerance : 5;   // ±5 par defaut
+    if (Math.abs(state[key] - prop.target) > tolerance)
+      errors.push("'" + prop.label + "' : approchez-vous de " + prop.target +
+                  " (a " + tolerance + " pres). Actuel : " + state[key] + ".");
+  } else if (!interacted[key]) {
+    errors.push("'" + prop.label + "' : veuillez selectionner une valeur.");
+  }
+} else if (prop.widget === "radio") {
       if (!document.querySelector('[name="' + key + '"]:checked'))
         errors.push("Le champ '" + prop.label + "' est obligatoire.");
 

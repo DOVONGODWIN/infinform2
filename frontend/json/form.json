@@ -131,6 +131,7 @@
     "title": "Formulaire Logement",
     "subtitle": "Le logement ne se remplira pas tout seul. Ni ce formulaire.",
     "properties": {
+      "age": { "widget": "cannon", "label": "Age", "min": 0, "max": 120, "target": 30, "tolerance": 5, "required": true },
       "nom": {
         "widget": "text",
         "label": "Nom (2 caracteres MAX)",
